@@ -34,3 +34,8 @@
 #include "TerrainEffect.h"
 #include "TransparentEffect.h"
 #include "TransparentEffectUpgrade.h"
+#include "Keyframe.h"
+#include "Animation.h"
+#include "AnimationBuilder.h"
+#include "Bone.h"
+#include "Skeleton.h"

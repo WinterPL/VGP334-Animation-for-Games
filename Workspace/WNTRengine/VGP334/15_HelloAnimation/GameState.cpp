@@ -6,8 +6,8 @@ using namespace WNTRengine::Input;
 
 void GameState::Initialize()
 {
-    mCamera.SetPosition({ 0.0f, 2.0f,-4.0f });
-    mCamera.SetLookAt({ 0.0f, 1.0f,0.0f });
+    mCamera.SetPosition({ 0.0f, 7.0f,-5.0f });
+    mCamera.SetLookAt({ 0.0f, 3.0f,0.0f });
 
     mDirectionalLight.direction = WNTRmath::Normalize({ 1.0f,-1.0f,1.0f });
     mDirectionalLight.ambient = { 0.4f,0.4f,0.4f,1.0f };
@@ -19,9 +19,6 @@ void GameState::Initialize()
     mStandardEffect.SetCamera(mCamera);
     mStandardEffect.SetDirectionalLight(mDirectionalLight);
 
-    ModelId modelId = ModelManager::Get()->LoadModel("../../Assets/Models/Character/Character.model");
-    mCharacter = CreateRenderGroup(modelId);
-
     Mesh groundMesh = MeshBuilder::CreateGroupPlane(20, 20, (int)1.0f);
     mGround.meshBuffer.Initialize(groundMesh);
     mGround.diffuseMapId = TextureManager::Get()->LoadTexture(L"misc/concrete.jpg");
@@ -29,11 +26,43 @@ void GameState::Initialize()
     mGround.material.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
     mGround.material.specular = { 0.9f, 0.9f, 0.9f, 1.0f };
     mGround.material.power = 20.f;
+
+    Mesh ball = MeshBuilder::CreateSphere(60, 60, 0.5f);
+    mBall.meshBuffer.Initialize(ball);
+    mBall.diffuseMapId = TextureManager::Get()->LoadTexture(L"misc/basketball.jpg");
+    mBall.material.ambient = { 0.3f, 0.3f, 0.3f, 1.0f };
+    mBall.material.diffuse = { 0.8f, 0.8f, 0.8f, 1.0f };
+    mBall.material.specular = { 0.9f, 0.9f, 0.9f, 1.0f };
+    mBall.material.power = 20.f;
+
+    mAnimationTime = 0.0f;
+    mBallAnimation = AnimationBuilder()
+        .AddPositionKey(Vector3( 8.0f, 5.0f, 0.0f), 0.f)
+        .AddPositionKey(Vector3( 6.0f, 4.0f, 0.0f), 1.f)
+        .AddPositionKey(Vector3( 4.0f, 3.0f, 0.0f), 2.f)
+        .AddPositionKey(Vector3( 2.0f, 2.0f, 0.0f), 3.f)
+        .AddPositionKey(Vector3( 0.0f, 1.0f, 0.0f), 4.f)
+        .AddPositionKey(Vector3(-2.0f, 2.0f, 0.0f), 5.f)
+        .AddPositionKey(Vector3(-4.0f, 3.0f, 0.0f), 6.f)
+        .AddPositionKey(Vector3(-6.0f, 4.0f, 0.0f), 7.f)
+        .AddPositionKey(Vector3(-8.0f, 5.0f, 0.0f), 8.f)
+        .AddPositionKey(Vector3(-6.0f, 4.0f, 0.0f), 9.f)
+        .AddPositionKey(Vector3(-4.0f, 3.0f, 0.0f), 10.f)
+        .AddPositionKey(Vector3(-2.0f, 2.0f, 0.0f), 11.f)
+        .AddPositionKey(Vector3( 0.0f, 1.0f, 0.0f), 12.f)
+        .AddPositionKey(Vector3( 2.0f, 2.0f, 0.0f), 13.f)
+        .AddPositionKey(Vector3( 4.0f, 3.0f, 0.0f), 14.f)
+        .AddPositionKey(Vector3( 6.0f, 4.0f, 0.0f), 15.f)
+        .AddPositionKey(Vector3( 8.0f, 5.0f, 0.0f), 16.f)
+        .AddScaleKey(Vector3::One, 0.f)
+        .AddRotationKey(Quaternion(0.f, 0.f, 0.f, 0.f), 0.f)
+
+        .Build();
 }
 
 void GameState::Terminate()
 {
-    CleanupRenderGroup(mCharacter);
+    mBall.Terminate();
     mGround.Terminate();
     mStandardEffect.Terminate();
 }
@@ -41,7 +70,7 @@ void GameState::Terminate()
 void GameState::Render()
 {
     mStandardEffect.Begin();
-       DrawRenderGroup(mStandardEffect, mCharacter);
+       mStandardEffect.Render(mBall);
        mStandardEffect.Render(mGround);
     mStandardEffect.End();
 }
@@ -77,12 +106,19 @@ void GameState::Update(float deltaTime)
         mCamera.Pitch(input->GetMouseMoveY() * turnSpeed);
     }
 
+    mAnimationTime += deltaTime;
+    const float animDuration = mBallAnimation.GetDuration();
+    while (mAnimationTime > animDuration)
+    {
+        mAnimationTime -= animDuration;
+    }
+    mBall.transform = mBallAnimation.GetTransform(mAnimationTime);
 }
 
 void GameState::DebugUI()
 {
     ImGui::Begin("Debug Draw", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-        if (ImGui::CollapsingHeader("Lighting##", ImGuiTreeNodeFlags_DefaultOpen))
+        /*if (ImGui::CollapsingHeader("Lighting##", ImGuiTreeNodeFlags_DefaultOpen))
         {
             if (ImGui::DragFloat3("Directional##Light", &mDirectionalLight.direction.x, 0.01f, -0.01f, 1.0f)){
                 mDirectionalLight.direction = WNTRmath::Normalize(mDirectionalLight.direction);
@@ -90,32 +126,15 @@ void GameState::DebugUI()
             ImGui::ColorEdit4("Ambient##Light", &mDirectionalLight.ambient.r);
             ImGui::ColorEdit4("Diffuse##Light", &mDirectionalLight.diffuse.r);
             ImGui::ColorEdit4("Specular##Light", &mDirectionalLight.specular.r);
-        }
+        }*/
         bool updateCharacter = false;
         if (ImGui::CollapsingHeader("Position##", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            if (ImGui::DragFloat("Yaw##", &mYaw, 0.01f))
-            {
-                updateCharacter = true;
-            }
-            if (ImGui::DragFloat("Pitch##", &mPitch, 0.01f))
-            {
-                updateCharacter = true;
-            }
-            if (ImGui::DragFloat("Roll##", &mRoll, 0.01f))
-            {
-                updateCharacter = true;
-            }
+         
         }
-        mStandardEffect.DebugUI();
+        //mStandardEffect.DebugUI();
     ImGui::End();
-    if (updateCharacter)
-    {
-        for (auto& RenderObject : mCharacter)
-        {
-            RenderObject.transform.rotation = Quaternion::CreateFromYawPitchRoll(mYaw, mPitch, mRoll);
-        }
-    }
+    
 }
 
 

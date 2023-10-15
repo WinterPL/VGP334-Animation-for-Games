@@ -37,7 +37,7 @@ namespace WNTRengine::WNTRmath
         //static
         static Quaternion Conjugate(Quaternion& q);
         static float Magnitude(const Quaternion& q);
-        static void Normalize(Quaternion& q);
+        static Quaternion Normalize(const Quaternion& q);
 
         static Quaternion CreateFromAxisAngle(const Vector3& axis, float angle)noexcept;
         static Quaternion CreateFromYawPitchRoll(float yaw, float pitch,float roll)noexcept;

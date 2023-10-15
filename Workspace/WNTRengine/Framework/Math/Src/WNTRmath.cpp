@@ -55,8 +55,8 @@ Quaternion Quaternion::Conjugate(Quaternion& q) {
 float Quaternion::Magnitude(const Quaternion& q) {
     return sqrt(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
 }
-void Quaternion::Normalize(Quaternion& q) {
-    q = q / Quaternion::Magnitude(q);
+Quaternion Quaternion::Normalize(const Quaternion& q) {
+    return (q / Quaternion::Magnitude(q));
 }
 
 Quaternion Quaternion::CreateFromAxisAngle(const Vector3& axis, float angle)noexcept {
@@ -118,12 +118,30 @@ Quaternion Quaternion::CreateFromRotationMatrix(const Matrix4& m)noexcept {
 }
 
 Quaternion Quaternion::Lerp(const Quaternion& q0, const Quaternion& q1, float t) {
-    return q0 * (1.0f - t) + (q1 * t);
+    return (q0 * (1.0f - t) + (q1 * t));
 }
 Quaternion Quaternion::SLerp(const Quaternion& q0, const Quaternion& q1, float t) {
     float dot = q0.Dot(q1);
-    float omega = std::acos(dot);
-    float invSinOmega = 1.0f / sin(omega);
-    return q0 * (sin((1.0f - t) * omega) * invSinOmega) + q1 * (sin(t * omega) * invSinOmega);
+    float q1Scale = 1.0f;
+    if (dot < 0.0f)
+    {
+        dot = -dot;
+        q1Scale = -1.0f;
+    }
+    if (dot > 0.999f)
+    {
+        return Normalize(Lerp(q0, q1, t));
 
+    }
+    float theta = acosf(dot);
+    float sintheta = sinf(theta);
+    float scale0 = sinf(theta * (1.0f - t)) / sintheta;
+    float scale1 = sinf(theta * t) / sintheta;
+
+    return {
+        (q0.x * scale0) + (q1.x * scale1),
+        (q0.y * scale0) + (q1.y * scale1),
+        (q0.z * scale0) + (q1.z * scale1),
+        (q0.w * scale0) + (q1.w * scale1)
+    };
 }

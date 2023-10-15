@@ -40,9 +40,13 @@ namespace WNTRengine::Graphics
 	struct Vertex
 	{
 		VERTEX_FORMAT(VE_Position | VE_Normal | VE_Tangent | VE_TexCoord | VE_BlendIndex | VE_BlendWeight);
+		static constexpr int MaxBones = 4;
+
 		WNTRmath::Vector3 position;
 		WNTRmath::Vector3 normal;
 		WNTRmath::Vector3 tangent;
 		WNTRmath::Vector2 uvCoord;
+		int boneIndices[MaxBones] = {};
+		float boneWeights[MaxBones] = {};
 	};
 }
