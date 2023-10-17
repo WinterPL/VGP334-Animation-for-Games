@@ -35,6 +35,7 @@ void GameState::Initialize()
     mBall.material.specular = { 0.9f, 0.9f, 0.9f, 1.0f };
     mBall.material.power = 20.f;
 
+    constexpr auto rad = WNTRmath::Constants::DegToRad;
     mAnimationTime = 0.0f;
     mBallAnimation = AnimationBuilder()
         .AddPositionKey(Vector3( 8.0f, 5.0f, 0.0f), 0.f)
@@ -54,9 +55,24 @@ void GameState::Initialize()
         .AddPositionKey(Vector3( 4.0f, 3.0f, 0.0f), 14.f)
         .AddPositionKey(Vector3( 6.0f, 4.0f, 0.0f), 15.f)
         .AddPositionKey(Vector3( 8.0f, 5.0f, 0.0f), 16.f)
-        .AddScaleKey(Vector3::One, 0.f)
-        .AddRotationKey(Quaternion(0.f, 0.f, 0.f, 0.f), 0.f)
-
+        .AddScaleKey(Vector3::One, 0.0f)
+        .AddScaleKey(Vector3::One, 3.9f)
+        .AddScaleKey(Vector3(1.0f,0.8f,1.0f), 4.0f)
+        .AddScaleKey(Vector3::One, 5.0f)
+        .AddScaleKey(Vector3::One, 11.9f)
+        .AddScaleKey(Vector3(1.0f, 0.8f, 1.0f), 12.0f)
+        .AddScaleKey(Vector3::One, 13.0f)
+        .AddScaleKey(Vector3::One, 16.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll(0 * rad, rad, rad), 0.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll(90 * rad,rad, rad), 2.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll(180 * rad,rad, rad), 4.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll(270 * rad, rad, rad), 6.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll(360 * rad, rad, rad), 8.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll(270 * rad, rad, rad), 10.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll(180 * rad, rad, rad), 12.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll(90 * rad, rad, rad), 14.0f)
+        .AddRotationKey(Quaternion::CreateFromYawPitchRoll( 0 * rad, rad, rad), 16.0f)
+        .AddScaleKey(Vector3::One, 13.0f)
         .Build();
 }
 
