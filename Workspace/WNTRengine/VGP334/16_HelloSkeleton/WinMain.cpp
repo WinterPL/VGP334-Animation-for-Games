@@ -6,7 +6,7 @@ using namespace WNTRengine;
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int)
 {
 	AppConfig config;
-	config.appName = L"HelloAnimation";
+	config.appName = L"HelloSkeleton";
 
 	App& myApp = MainApp();
 	myApp.AddState<GameState>("GameState");

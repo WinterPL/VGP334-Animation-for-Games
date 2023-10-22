@@ -6,9 +6,8 @@ namespace WNTRengine::Graphics
 {
 	struct Skeleton
 	{
-		Bone* roott = nullptr;
+		Bone* root = nullptr;
 		std::vector<std::unique_ptr<Bone>>bones;
 	};
-
 
 }

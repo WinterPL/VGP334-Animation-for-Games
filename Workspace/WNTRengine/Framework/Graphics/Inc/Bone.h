@@ -12,8 +12,8 @@ namespace WNTRengine::Graphics
 		Bone* parent = nullptr;
 		int parentIndex = 0;
 
-		std::vector<Bone*>childeren;
-		std::vector<int>childerenIndices;
+		std::vector<Bone*>children;
+		std::vector<int>childrenIndices;
 
 
 		WNTRmath::Matrix4 toParentTransform;

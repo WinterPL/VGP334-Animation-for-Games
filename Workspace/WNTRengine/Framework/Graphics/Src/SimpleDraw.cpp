@@ -185,7 +185,7 @@ void SimpleDraw::AddFilledAABB(float minX, float minY, float minZ, float maxX, f
 
 }
 
-void SimpleDraw::AddSphere(int slices, int rings, float radius, const Vector3& pos, const Color& color) {
+void SimpleDraw::AddSphere(int slices, int rings, float radius, const Vector3& pos, const Color& color, const Vector3& origin) {
 	Vector3 v0 = Vector3::Zero;
 	Vector3 v1 = Vector3::Zero;
 

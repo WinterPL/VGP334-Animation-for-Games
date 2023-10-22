@@ -17,7 +17,7 @@ namespace WNTRengine::Graphics {
 		void AddFilledAABB(const Vector3& min, const Vector3& max, const Color& color);
 		void AddFilledAABB(float minX, float minY, float minZ, float maxX, float maxY, float maxZ, const Color& color);
 
-		void AddSphere(int slices, int rings, float radius,const Vector3& pos, const Color& color);
+		void AddSphere(int slices, int rings, float radius,const Vector3& pos, const Color& color, const Vector3& origin = Vector3::Zero);
 
 		void AddGroundPlane(float size, const Color& color);
 

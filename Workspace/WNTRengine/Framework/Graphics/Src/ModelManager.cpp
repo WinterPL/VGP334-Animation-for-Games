@@ -41,6 +41,7 @@ ModelId ModelManager::LoadModel(const std::filesystem::path& filePath)
 		modelPtr = std::make_unique<Model>();
 		ModelIO::LoadModel(filePath, *modelPtr);
 		ModelIO::LoadMaterial(filePath, *modelPtr);
+		ModelIO::LoadSkeleton(filePath, *modelPtr);
 	}
 	return modelId;
 }
