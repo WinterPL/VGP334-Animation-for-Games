@@ -9,30 +9,37 @@ using namespace WNTRengine::Graphics::AnimationUtil;
 
 namespace
 {
-	void ComputeBoneTransformRecursive(const Bone* bone, BoneTransforms& boneTransforms)
+	void ComputeBoneTransformRecursive(const Bone* bone, BoneTransforms& boneTransforms, const Animator* animator)
 	{
 		if (bone != nullptr)
-		{
-			boneTransforms[bone->index] = bone->toParentTransform;
+		{	
+			if (animator)
+			{
+				boneTransforms[bone->index] = animator->GetToParentTransform(bone);
+			}
+			else
+			{
+				boneTransforms[bone->index] = bone->toParentTransform;
+			}
 			if (bone->parent != nullptr)
 			{
-				boneTransforms[bone->index] = bone->toParentTransform * boneTransforms[bone->parentIndex];
+				boneTransforms[bone->index] = boneTransforms[bone->index] * boneTransforms[bone->parentIndex];
 			}
 			for (auto child : bone->children)
 			{
-				ComputeBoneTransformRecursive(child, boneTransforms);
+				ComputeBoneTransformRecursive(child, boneTransforms,animator);
 			}
 		}
 	}
 }
 
-void AnimationUtil::ComputeBoneTransform(ModelId modelId, BoneTransforms& boneTransforms)
+void AnimationUtil::ComputeBoneTransform(ModelId modelId, BoneTransforms& boneTransforms, const Animator* animator)
 {
 	auto model = ModelManager::Get()->GetModel(modelId);
 	if (model->skeleton != nullptr)
 	{
 		boneTransforms.resize(model->skeleton->bones.size(), WNTRmath::Matrix4::Identity);
-		ComputeBoneTransformRecursive(model->skeleton->root, boneTransforms);
+		ComputeBoneTransformRecursive(model->skeleton->root, boneTransforms, animator);
 	}
 }
 void AnimationUtil::ApplyBoneOffsets(ModelId modelId, BoneTransforms& boneTransforms)
