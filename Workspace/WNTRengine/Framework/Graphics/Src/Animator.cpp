@@ -35,7 +35,7 @@ void Animator::update(float deltaTime)
 		{
 			while (mAnimationTick >= animClip.tickDuration)
 			{
-				mAnimationTick -= animClip.ticksPerSecond;
+				mAnimationTick -= animClip.tickDuration;
 			}
 		}
 		else
@@ -75,7 +75,7 @@ WNTRmath::Matrix4 Animator::GetToParentTransform(const Bone* bone) const
 	const auto& animation = animClip.boneAnimations[bone->index];
 	if (animation == nullptr)
 	{
-		return bone->toParentTransform;
+		return WNTRmath::Matrix4::Identity;
 	}
 
 	Transform transform = animation->GetTransform(mAnimationTick);
