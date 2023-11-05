@@ -84,11 +84,13 @@ void ModelIO::SaveModel(std::filesystem::path filePath, const Model& model)
 
 		for (auto& v : mesh.vertices)
 		{
-			fprintf_s(file, "%f %f %f %f %f %f  %f %f %f %f %f\n",
+			fprintf_s(file, "%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %d %d %d %d\n",
 				v.position.x, v.position.y, v.position.z,
 				v.normal.x, v.normal.y, v.normal.z,
 				v.tangent.x, v.tangent.y, v.tangent.z,
-				v.uvCoord.x, v.uvCoord.y);
+				v.uvCoord.x, v.uvCoord.y,
+				v.boneWeights[0], v.boneWeights[1], v.boneWeights[2], v.boneWeights[3],
+				v.boneIndices[0], v.boneIndices[1], v.boneIndices[2], v.boneIndices[3]);
 		}
 
 		const uint32_t indexCount = static_cast<uint32_t>(mesh.indices.size());
@@ -127,11 +129,13 @@ void ModelIO::LoadModel(std::filesystem::path filePath, Model& model)
 
 		for (auto& v : mesh.vertices)
 		{
-			fscanf_s(file, "%f %f %f %f %f %f %f %f %f %f %f\n",
+			fscanf_s(file, "%f %f %f %f %f %f %f %f %f %f %f %f %f %f %f %d %d %d %d\n",
 				&v.position.x, &v.position.y, &v.position.z,
 				&v.normal.x,   &v.normal.y,   &v.normal.z,
 				&v.tangent.x,  &v.tangent.y,  &v.tangent.z,
-				&v.uvCoord.x,  &v.uvCoord.y);
+				&v.uvCoord.x,  &v.uvCoord.y,
+				&v.boneWeights[0], &v.boneWeights[1], &v.boneWeights[2], &v.boneWeights[3],
+				&v.boneIndices[0], &v.boneIndices[1], &v.boneIndices[2], &v.boneIndices[3]);
 		}
 
 		uint32_t indexCount = 0;

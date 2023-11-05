@@ -43,8 +43,6 @@ void Animator::update(float deltaTime)
 			mAnimationTick = animClip.tickDuration;
 		}
 	}
-
-
 }
 
 bool Animator::IsFinished() const

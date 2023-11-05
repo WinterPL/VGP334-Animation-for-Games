@@ -50,8 +50,10 @@ namespace WNTRengine::Graphics
 			int useSpecMap    = 0;
 			int useCelShading = 0;
 			int useShadowMap  = 0;
+			int useSkinning = 1;
 			float bumpWeight  = 1.0f;
 			float depthBias  = 0.000050f;
+			float padding[3] = {0};
 		};
 
 
@@ -59,10 +61,13 @@ namespace WNTRengine::Graphics
 		using LightingBuffer = TypedConstantBuffer<DirectionalLight>;
 		using MaterialBuffer = TypedConstantBuffer<Material>;
 		using SettingBuffer = TypedConstantBuffer<SettingData>;
+		using BoneTransformBuffer = ConstantBuffer;
+
 		TransformBuffer mTransformBuffer;
 		LightingBuffer mLightingBuffer;
 		MaterialBuffer mMaterialBuffer;
 		SettingBuffer mSettingBuffer;
+		BoneTransformBuffer mBoneTransformBuffer;
 
 		VertexShader mVertexShader;
 		PixelShader mPixelShader;

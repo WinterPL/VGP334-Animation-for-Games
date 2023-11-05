@@ -4,6 +4,8 @@
 #include "TextureManager.h"
 #include "Material.h"
 #include "ModelManager.h"
+#include "Animator.h"
+#include "Skeleton.h"
 
 namespace WNTRengine::Graphics {
 
@@ -24,11 +26,14 @@ namespace WNTRengine::Graphics {
 		ModelId modelId = 0;
 
 		MeshBuffer meshBuffer;
+
+		const Skeleton* skeleton = nullptr;
+		const Animator* animator = nullptr;
 	};
 
 	using RenderGroup = std::vector<RenderObject>;
-	[[nodiscard]] RenderGroup CreateRenderGroup(ModelId modelId);
-	[[nodiscard]] RenderGroup CreateRenderGroup(const Model& model);
+	[[nodiscard]] RenderGroup CreateRenderGroup(ModelId modelId, const Animator* animator = nullptr);
+	[[nodiscard]] RenderGroup CreateRenderGroup(const Model& model, const Animator* animator = nullptr);
 	void CleanupRenderGroup(RenderGroup& renderGroup);
 
 	template<class Effect>

@@ -17,6 +17,7 @@ struct Arguments
 	std::filesystem::path inputFileName;
 	std::filesystem::path outputFileName;
 	float scale = 1.0f;
+	bool animOnly = false;
 };
 
 std::optional<Arguments> ParseArgs(int  argc, char* argv[])
@@ -33,6 +34,11 @@ std::optional<Arguments> ParseArgs(int  argc, char* argv[])
 		if (strcmp(argv[i], "-scale") == 0)
 		{
 			arguments.scale = atof(argv[i + 1]);
+			++i;
+		}
+		else if (strcmp(argv[i], "-animOnly") == 0)
+		{
+			arguments.animOnly = atoi(argv[i + 1]) == 1;
 			++i;
 		}
 	}
@@ -264,7 +270,7 @@ int main(int  argc, char* argv[])
 
 		model.skeleton = std::make_unique<Skeleton>();
 		BuildSkeleton(*scene->mRootNode, nullptr, *model.skeleton, boneIndexLookup);
-		for (uint32_t meshIndex = 0; meshIndex < scene->mNumSkeletons; ++meshIndex)
+		for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex)
 		{
 			const auto& aiMesh = scene->mMeshes[meshIndex];
 			if (aiMesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
@@ -289,6 +295,8 @@ int main(int  argc, char* argv[])
 			bone->toParentTransform._43 *= arguments.scale;
 		}
 
+		if (!arguments.animOnly)
+		{
 		printf("Reading Mesh Data . . . ");
 		for (uint32_t meshIndex = 0; meshIndex < scene->mNumMeshes; ++meshIndex)
 		{
@@ -338,10 +346,34 @@ int main(int  argc, char* argv[])
 				mesh.indices.push_back(aiFace.mIndices[1]);
 				mesh.indices.push_back(aiFace.mIndices[2]);
 			}
+
+			if (aiMesh->HasBones())
+			{
+				printf("Reading bone weights . . .\n");
+				std::vector<int> numWeightsAdded(mesh.vertices.size());
+				for (uint32_t b = 0; b < aiMesh->mNumBones; ++b)
+				{
+					const aiBone* bone = aiMesh->mBones[b];
+					uint32_t boneIndex = GetBoneIndex(bone, boneIndexLookup);
+					for (uint32_t w = 0; w < bone->mNumWeights; ++w)
+					{
+						const aiVertexWeight& weight = bone->mWeights[w];
+						Vertex& vertex = mesh.vertices[weight.mVertexId];
+						int& count = numWeightsAdded[weight.mVertexId];
+							if (count < Vertex::MaxBones)
+							{
+								vertex.boneIndices[count] = boneIndex;
+								vertex.boneWeights[count] = weight.mWeight;
+								++count;
+							}
+						}
+					}
+				}
+			}
 		}
 	}
 
-	if (scene->HasMaterials())
+	if (!arguments.animOnly && scene->HasMaterials())
 	{
 		printf("Reading Material Data . . .");
 
@@ -372,7 +404,7 @@ int main(int  argc, char* argv[])
 		}
 	}
 
-	if (scene->HasAnimations())
+	if ( scene->HasAnimations())
 	{
 		printf("Building animations . . .\n");
 		for (uint32_t animIndex = 0; animIndex < scene->mNumAnimations; ++animIndex)
@@ -420,15 +452,19 @@ int main(int  argc, char* argv[])
 		}
 	}
 
-	printf("Saving model . . .\n");
-	ModelIO::SaveModel(arguments.outputFileName, model);
+
+	if (!arguments.animOnly)
+	{
+		printf("Saving model . . .\n");
+		ModelIO::SaveModel(arguments.outputFileName, model);
 
 
-	printf("Saving material . . .\n");
-	ModelIO::SaveMaterial(arguments.outputFileName, model);
+		printf("Saving material . . .\n");
+		ModelIO::SaveMaterial(arguments.outputFileName, model);
 
-	printf("Saving skeleton . . .\n");
-	ModelIO::SaveSkeleton(arguments.outputFileName, model);
+		printf("Saving skeleton . . .\n");
+		ModelIO::SaveSkeleton(arguments.outputFileName, model);
+	}
 
 	printf("Saving Animatioan . . .\n");
 	ModelIO::SaveAnimations(arguments.outputFileName, model);

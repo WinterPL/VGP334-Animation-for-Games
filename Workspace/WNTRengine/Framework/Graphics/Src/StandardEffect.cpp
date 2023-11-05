@@ -5,10 +5,13 @@
 #include "RenderObject.h"
 #include "VertexTypes.h"
 #include "TextureManager.h"
+#include "AnimationUtil.h"
 
 using namespace WNTRengine;
 using namespace WNTRengine::WNTRmath;
 using namespace WNTRengine::Graphics;
+
+static constexpr size_t MaxBoneCount = 256;
 
 void StandardEffect::Initialize(const std::filesystem::path& filepath)
 {
@@ -16,6 +19,7 @@ void StandardEffect::Initialize(const std::filesystem::path& filepath)
 	mLightingBuffer.Initialize();
 	mMaterialBuffer.Initialize();
 	mSettingBuffer.Initialize();
+	mBoneTransformBuffer.Initialize(MaxBoneCount * sizeof(WNTRmath::Matrix4));
 	mVertexShader.Initialize<Vertex>(filepath);
 	mPixelShader.Initialize(filepath);
 	mSampler.Initialize(Sampler::Filter::Linear, Sampler::AddressMode::Wrap);
@@ -25,8 +29,11 @@ void StandardEffect::Terminate()
 {
 	mSampler.Terminate();
 	mPixelShader.Terminate();
-	mMaterialBuffer.Terminate();
 	mVertexShader.Terminate();
+	mBoneTransformBuffer.Terminate();
+	mSettingBuffer.Terminate();
+	mMaterialBuffer.Terminate();
+	mLightingBuffer.Terminate();
 	mTransformBuffer.Terminate();
 }
 
@@ -45,6 +52,8 @@ void StandardEffect::Begin()
 
 	mSettingBuffer.BindVS(3);
 	mSettingBuffer.BindPS(3);
+
+	mBoneTransformBuffer.BindVS(4);
 
 	mSampler.BindVS(0);
 	mSampler.BindPS(0);
@@ -74,6 +83,7 @@ void StandardEffect::Render(const RenderObject& renderObject)
 	settingData.useShadowMap = mSettingData.useShadowMap > 0 && mShadowMap != nullptr;
 	settingData.bumpWeight = mSettingData.bumpWeight;
 	settingData.depthBias = mSettingData.depthBias;
+	settingData.useSkinning = mSettingData.useSkinning > 0 && renderObject.skeleton != nullptr;
 	mSettingBuffer.Update(mSettingData);
 	
 	TransformData transformData;
@@ -89,6 +99,20 @@ void StandardEffect::Render(const RenderObject& renderObject)
 		mShadowMap->BindPS(4);
 	}
 	mTransformBuffer.Update(transformData);
+
+	if (settingData.useSkinning)
+	{
+		AnimationUtil::BoneTransforms boneTransform;
+		AnimationUtil::ComputeBoneTransform(renderObject.modelId, boneTransform, renderObject.animator);
+		AnimationUtil::ApplyBoneOffsets(renderObject.modelId, boneTransform);
+
+		for (auto& transform : boneTransform)
+		{
+			transform = Transpose(transform);
+		}
+		boneTransform.resize(MaxBoneCount);
+		mBoneTransformBuffer.Update(boneTransform.data());
+	}
 
 	mLightingBuffer.Update(*mDirectionalLight);
 
@@ -158,6 +182,11 @@ void StandardEffect::DebugUI()
 		if (ImGui::Checkbox("UseShadowMap##", &useShadowMap))
 		{
 			mSettingData.useShadowMap = (useShadowMap) ? 1 : 0;
+		}
+		bool useSkinning = mSettingData.useSkinning > 0;
+		if (ImGui::Checkbox("UseSkinning##", &useSkinning))
+		{
+			mSettingData.useSkinning = (useSkinning) ? 1 : 0;
 		}
 		ImGui::DragFloat("DepthBias##", &mSettingData.depthBias, 0.0000001f, 0.0f, 1.0f , "%.6f");
 	}

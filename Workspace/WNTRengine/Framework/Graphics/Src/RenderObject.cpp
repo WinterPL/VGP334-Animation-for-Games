@@ -15,10 +15,10 @@ void RenderObject::Terminate()
 	meshBuffer.Terminate();
 }
 
-RenderGroup Graphics::CreateRenderGroup(ModelId modelId)
+RenderGroup Graphics::CreateRenderGroup(ModelId modelId, const Animator* animator)
 {
 	auto model = ModelManager::Get()->GetModel(modelId);
-	RenderGroup renderGroup = CreateRenderGroup(*model);
+	RenderGroup renderGroup = CreateRenderGroup(*model, animator);
 	for (auto& renderObject : renderGroup)
 	{
 		renderObject.modelId = modelId;
@@ -26,7 +26,7 @@ RenderGroup Graphics::CreateRenderGroup(ModelId modelId)
 	return renderGroup;
 }
 
-RenderGroup Graphics::CreateRenderGroup(const Model& model) {
+RenderGroup Graphics::CreateRenderGroup(const Model& model, const Animator* animator) {
 	RenderGroup renderGroup;
 	renderGroup.reserve(model.meshData.size());
 
@@ -54,7 +54,10 @@ RenderGroup Graphics::CreateRenderGroup(const Model& model) {
 		}
 
 		renderObject.meshBuffer.Initialize(meshData.mesh);
+		renderObject.skeleton = model.skeleton.get();
+		renderObject.animator = animator;
 	}
+
 	return renderGroup;
 }
 

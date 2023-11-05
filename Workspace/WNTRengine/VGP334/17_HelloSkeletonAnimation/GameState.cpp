@@ -20,7 +20,11 @@ void GameState::Initialize()
     mStandardEffect.SetDirectionalLight(mDirectionalLight);
 
     mCharacterId = ModelManager::Get()->LoadModel("../../Assets/Models/Character/Character.model");
-    mCharacter = CreateRenderGroup(mCharacterId);
+    ModelManager::Get()->AddAnimation(mCharacterId,"../../Assets/Models/Character/Walking.animset");
+    ModelManager::Get()->AddAnimation(mCharacterId,"../../Assets/Models/Character/Flair.animset");
+    ModelManager::Get()->AddAnimation(mCharacterId,"../../Assets/Models/Character/SillyDancing.animset");
+    ModelManager::Get()->AddAnimation(mCharacterId,"../../Assets/Models/Character/BrooklynUprock.animset");
+    mCharacter = CreateRenderGroup(mCharacterId, &mCharacterAnimator);
     mCharacterAnimator.Initialize(mCharacterId);
 
     Mesh groundMesh = MeshBuilder::CreateGroupPlane(20, 20, (int)1.0f);
@@ -103,12 +107,9 @@ void GameState::DebugUI()
             ImGui::ColorEdit4("Specular##Light", &mDirectionalLight.specular.r);
         }
         ImGui::Checkbox("DrawSkeleton##", &mDrawSkeleton);
-        if (mDrawSkeleton)
+        if (ImGui::DragInt("PlayAnimation##", &mAnimationIndex, 1, -1, mCharacterAnimator.GetAnimationCount() - 1))
         {
-            if(ImGui::DragInt("PlayAnimation##", &mAnimationIndex,1, -1, mCharacterAnimator.GetAnimationCount() -1))
-            {
-                mCharacterAnimator.PlayAnimation(mAnimationIndex, true);
-            }
+            mCharacterAnimator.PlayAnimation(mAnimationIndex, true);
         }
         mStandardEffect.DebugUI();
         SimpleDraw::Render(mCamera);
