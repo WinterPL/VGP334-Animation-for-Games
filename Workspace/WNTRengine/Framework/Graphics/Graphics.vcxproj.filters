@@ -191,7 +191,6 @@
     <ClCompile Include="Src\ModelIO.cpp">
       <Filter>Src</Filter>
     </ClCompile>
-    <ClCompile Include="Src\RenderObject.cpp" />
     <ClCompile Include="Src\ModelManager.cpp">
       <Filter>Src</Filter>
     </ClCompile>
@@ -226,6 +225,9 @@
       <Filter>Src</Filter>
     </ClCompile>
     <ClCompile Include="Src\Animator.cpp">
+      <Filter>Src</Filter>
+    </ClCompile>
+    <ClCompile Include="Src\RenderObject.cpp">
       <Filter>Src</Filter>
     </ClCompile>
   </ItemGroup>

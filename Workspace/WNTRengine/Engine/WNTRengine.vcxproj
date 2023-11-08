@@ -45,6 +45,9 @@
     <ProjectReference Include="..\Framework\Math\Math.vcxproj">
       <Project>{4e8c6125-f681-4735-b2d4-eb5ceba61b57}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\Framework\Physics\Physics.vcxproj">
+      <Project>{63a2aa39-eb90-479e-983d-ab560e0d85e8}</Project>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

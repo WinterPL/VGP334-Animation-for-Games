@@ -8,6 +8,7 @@ using namespace WNTRengine;
 using namespace WNTRengine::Core;
 using namespace WNTRengine::Input;
 using namespace WNTRengine::Graphics;
+using namespace WNTRengine::Physics;
 
 void App::ChangeState(const std::string& stateName)
 {
@@ -41,6 +42,9 @@ void App::Run(const AppConfig& config)
 	TextureManager::StaticInitialize("../../Assets/Textures/");
 	ModelManager::StaticInitialize();
 
+	PhysicsWorld::Settings settings;
+	PhysicsWorld::StaticInitialize(settings);
+
 	ASSERT(mCurrentState != nullptr, "App -- need an app state");
 	mCurrentState->Initialize();
 	mRunning = true;
@@ -50,7 +54,6 @@ void App::Run(const AppConfig& config)
 
 		auto inputSystem = InputSystem::Get();
 		inputSystem->Update();
-
 
 		if (!myWindow.IsActive() || inputSystem->IsKeyPressed(KeyCode::ESCAPE))
 		{
@@ -67,9 +70,9 @@ void App::Run(const AppConfig& config)
 		
 		//run the game
 		auto deltaTime = TimeUtil::GetDeltaTime();
-
 		if (deltaTime < 0.5f)
 		{
+			PhysicsWorld::Get()->Update(deltaTime);
 			mCurrentState->Update(deltaTime);
 		}
 
@@ -83,6 +86,7 @@ void App::Run(const AppConfig& config)
 	}
 
 	//terminate static classes
+	PhysicsWorld::Staticterminate();
 	ModelManager::StaticTerminate();
 	TextureManager::StaticTerminate();
 	SimpleDraw::StaticTerminate();
