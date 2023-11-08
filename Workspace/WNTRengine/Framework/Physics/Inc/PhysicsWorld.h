@@ -1,5 +1,8 @@
 #pragma once
 
+#include "PhysicsDebugDrawer.h"
+#include "PhysicsObject.h"
+
 namespace WNTRengine::Physics
 {
 	class PhysicsWorld final
@@ -25,16 +28,22 @@ namespace WNTRengine::Physics
 		void Update(float deltaTime);
 		void DebugUI();
 
+		void Register(PhysicsObject* physicsObject);
+		void Unregister(PhysicsObject* physicsObject);
+
 	private:
 		Settings mSettings;
 		bool mRenderDebugUI = false;
 
+		PhysicsDebugDrawer mDebugDrawer;
 		//bullet objects
 		btBroadphaseInterface* mInterface = nullptr;
 		btCollisionDispatcher* mDispatcher = nullptr;
 		btDefaultCollisionConfiguration* mCollisionConfiguration = nullptr;
 		btDiscreteDynamicsWorld* mDynamicWorld = nullptr;
 		btSequentialImpulseConstraintSolver* mSolver = nullptr;
-
+		
+		using PhysicsObjects = std::vector<PhysicsObject*>;
+		PhysicsObjects mPhysicsObjects;
 	};
 }
