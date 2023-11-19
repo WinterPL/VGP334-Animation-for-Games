@@ -79,8 +79,8 @@ void PhysicsWorld::DebugUI()
 		{
 			debugMode = (isEnabled) ? debugMode | btIDebugDraw::DBG_DrawWireframe : debugMode & ~btIDebugDraw::DBG_DrawWireframe;
 		}
-		isEnabled = (debugMode & btIDebugDraw::DBG_DrawWireframe) > 0;
-		if (ImGui::Checkbox("[DBG]DrawWireframe", &isEnabled))
+		isEnabled = (debugMode & btIDebugDraw::DBG_DrawAabb) > 0;
+		if (ImGui::Checkbox("[DBG]DrawAabb", &isEnabled))
 		{
 			debugMode = (isEnabled) ? debugMode | btIDebugDraw::DBG_DrawAabb : debugMode & ~btIDebugDraw::DBG_DrawAabb;
 		}

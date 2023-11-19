@@ -5,3 +5,5 @@
 #include "PhysicsWorld.h"
 #include "PhysicsDebugDrawer.h"
 #include "PhysicsObject.h"
+#include "RigidBody.h"
+#include "CollisionShape.h"

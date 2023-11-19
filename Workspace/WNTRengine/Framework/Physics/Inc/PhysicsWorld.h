@@ -1,5 +1,4 @@
 #pragma once
-
 #include "PhysicsDebugDrawer.h"
 #include "PhysicsObject.h"
 
