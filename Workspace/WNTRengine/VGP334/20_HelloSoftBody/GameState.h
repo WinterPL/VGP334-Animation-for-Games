@@ -3,8 +3,6 @@
 #include "Inc/AppState.h"
 #include "Inc/WNTRengine.h"
 
-#include "ParticleSystem.h"
-
 using namespace WNTRengine;
 using namespace WNTRengine::Graphics;
 using namespace WNTRengine::Physics;
@@ -24,12 +22,13 @@ protected:
 	DirectionalLight mDirectionalLight;
 	StandardEffect mStandardEffect;
 
+	RenderObject mCloth;
+	Mesh mClothMesh;
+	SoftBody mClothBody;
+
 	RenderObject mGround;
 	CollisionShape mGroundShape;
 	RigidBody mGroundRigidBody;
-
-	ParticleEffect mParticleEffect;
-	ParticleSystem mParticleSystem;
 };
 
 

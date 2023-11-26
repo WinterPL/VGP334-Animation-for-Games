@@ -7,3 +7,4 @@
 #include "PhysicsObject.h"
 #include "RigidBody.h"
 #include "CollisionShape.h"
+#include "SoftBody.h"

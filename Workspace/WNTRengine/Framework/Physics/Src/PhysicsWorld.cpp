@@ -43,10 +43,14 @@ void PhysicsWorld::Initialize(const Settings& settings)
 	mDispatcher = new btCollisionDispatcher(mCollisionConfiguration);
 	mInterface = new btDbvtBroadphase();
 	mSolver = new btSequentialImpulseConstraintSolver();
+	
 	mDynamicWorld = new btDiscreteDynamicsWorld(mDispatcher,mInterface,mSolver,mCollisionConfiguration);
 	mDynamicWorld->setGravity(settings.gravity);
-
 	mDynamicWorld->setDebugDrawer(&mDebugDrawer);
+
+	mSoftBodyWorld = new btSoftRigidDynamicsWorld(mDispatcher, mInterface, mSolver, mCollisionConfiguration);
+	mSoftBodyWorld->setGravity(settings.gravity);
+	mSoftBodyWorld->setDebugDrawer(&mDebugDrawer);
 
 }
 void PhysicsWorld::Terminate()
@@ -99,6 +103,10 @@ void PhysicsWorld::Register(PhysicsObject* physicsObject)
 		{
 			mDynamicWorld->addRigidBody(physicsObject->GetRigidBody());
 		}
+		if (physicsObject->GetSoftBody() != nullptr)
+		{
+			mSoftBodyWorld->addSoftBody(physicsObject->GetSoftBody());
+		}
 	}
 }
 void PhysicsWorld::Unregister(PhysicsObject* physicsObject)
@@ -106,10 +114,21 @@ void PhysicsWorld::Unregister(PhysicsObject* physicsObject)
 	auto iter = std::find(mPhysicsObjects.begin(), mPhysicsObjects.end(), physicsObject);
 	if (iter != mPhysicsObjects.end())
 	{
+		if (physicsObject->GetSoftBody() != nullptr)
+		{
+			mSoftBodyWorld->removeSoftBody(physicsObject->GetSoftBody());
+		}
 		if (physicsObject->GetRigidBody() != nullptr)
 		{
 			mDynamicWorld->removeRigidBody(physicsObject->GetRigidBody());
 		}
 		mPhysicsObjects.erase(iter);
 	}
+}
+
+
+btSoftBody* PhysicsWorld::CreateSoftBody(int nodeCount)
+{
+	btSoftBody* softBody = new btSoftBody(&mSoftBodyWorld->getWorldInfo(), nodeCount, nullptr, nullptr);
+	return softBody;
 }

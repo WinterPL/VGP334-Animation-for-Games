@@ -8,12 +8,14 @@ struct ParticleSystemInfo
 	WNTRengine::WNTRmath::Vector3 spawnPosition;
 	WNTRengine::WNTRmath::Vector3 spawnDirection;
 	float spawnDelay;
-	int minParticlePermit = 0;
-	int maxParticlePermit = 0;
+	int minParticlePerEmit = 0;
+	int maxParticlePerEmit = 0;
 	float minTimeBetweenParticles = 0.0f;
 	float maxTimeBetweenParticles = 0.0f;
 	float minSpawnAngle = 0.0f;
 	float maxSpawnAngle = 0.0f;
+	float minSpeed = 0.0f;
+	float maxSpeed = 0.0f;
 	float lifeTime = 0.0f;
 	int maxParticles = 100;
 };
@@ -32,14 +34,14 @@ public:
 
 	void DebugUI();
 
-		template<class Effect>
+	template<class Effect>
 	void Render(Effect& effect)
 	{
 		if (mLifeTime > 0)
 		{
 			for(auto& particle:mParticles)
 			{ 
-				effect.Render(mParticles);
+				particle.Render(effect);
 			}
 		}
 	}
