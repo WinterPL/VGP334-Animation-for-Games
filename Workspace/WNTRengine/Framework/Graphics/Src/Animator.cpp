@@ -13,11 +13,17 @@ void Animator::Initialize(ModelId id)
 	mAnimationTick = 0.0f;
 	mClipIndex = -1;
 }
-void Animator::PlayAnimation(int clipIndex, bool looping)
+void Animator::PlayAnimation(int clipIndex, bool looping, bool blend)
 {
+
 	mClipIndex = clipIndex;
 	mIsLooping = looping;
 	mAnimationTick = 0.0f;
+
+	if (blend == true)
+	{
+		blending();
+	}
 }
 void Animator::update(float deltaTime)
 {
@@ -78,4 +84,11 @@ WNTRmath::Matrix4 Animator::GetToParentTransform(const Bone* bone) const
 
 	Transform transform = animation->GetTransform(mAnimationTick);
 	return transform.GetMatrix4();
+}
+
+
+
+void Animator::blending() {
+
+
 }
