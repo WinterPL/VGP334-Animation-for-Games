@@ -42,6 +42,7 @@ void SoftBody::Initialize(Graphics::Mesh& mesh, float mass, const std::vector<in
 		mSoftBody->m_nodes[fixedNode].m_im = 0.0f;
 	}
 
+	PhysicsWorld::Get()->Register(this);
 }
 void SoftBody::Terminate()
 {

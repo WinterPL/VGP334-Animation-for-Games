@@ -107,10 +107,14 @@ void GameState::DebugUI()
             ImGui::ColorEdit4("Specular##Light", &mDirectionalLight.specular.r);
         }
         ImGui::Checkbox("DrawSkeleton##", &mDrawSkeleton);
-        if (ImGui::DragInt("PlayAnimation##", &mAnimationIndex, 1, -1, mCharacterAnimator.GetAnimationCount() - 1))
+
+        
+
+        if (ImGui::Checkbox("Loop", &mLooping)||ImGui::Checkbox("Blending", &mBlending)|| ImGui::DragInt("PlayAnimation##", &mAnimationIndex, 1, -1, mCharacterAnimator.GetAnimationCount() - 1))
         {
-            mCharacterAnimator.PlayAnimation(mAnimationIndex, true);
+            mCharacterAnimator.PlayAnimation(mAnimationIndex, mLooping,mBlending);
         }
+       
         mStandardEffect.DebugUI();
         SimpleDraw::Render(mCamera);
     ImGui::End();

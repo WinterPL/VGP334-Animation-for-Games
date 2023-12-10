@@ -17,12 +17,13 @@ namespace WNTRengine::Graphics
 		size_t GetAnimationCount() const;
 		WNTRmath::Matrix4 GetToParentTransform(const Bone* bone) const;
 
-		void blending();
+		void blending(int lastClip, int newClip,float mDuration);
 	private:
 		ModelId mModelId = 0;
 		float mClipIndex = -1;
 		float mAnimationTick = 0.0f;
 		bool mIsLooping = false;
+		bool mIsBlending = false;
 	};
 
 }

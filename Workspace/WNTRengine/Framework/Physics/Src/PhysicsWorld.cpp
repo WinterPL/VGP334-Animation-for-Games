@@ -56,6 +56,7 @@ void PhysicsWorld::Initialize(const Settings& settings)
 void PhysicsWorld::Terminate()
 {
 	SafeDelete(mDynamicWorld);
+	SafeDelete(mSoftBodyWorld);
 	SafeDelete(mSolver);
 	SafeDelete(mInterface);
 	SafeDelete(mDispatcher);
@@ -65,6 +66,7 @@ void PhysicsWorld::Terminate()
 void PhysicsWorld::Update(float deltaTime)
 {
 	mDynamicWorld->stepSimulation(deltaTime, mSettings.simulationSteps, mSettings.fixedTimeStep);
+	mSoftBodyWorld->stepSimulation(deltaTime, mSettings.simulationSteps, mSettings.fixedTimeStep);
 
 	for (auto po : mPhysicsObjects)
 	{
@@ -91,6 +93,7 @@ void PhysicsWorld::DebugUI()
 
 		mDebugDrawer.setDebugMode(debugMode);
 		mDynamicWorld->debugDrawWorld();
+		mSoftBodyWorld->debugDrawWorld();
 	}
 }
 

@@ -15,15 +15,10 @@ void Animator::Initialize(ModelId id)
 }
 void Animator::PlayAnimation(int clipIndex, bool looping, bool blend)
 {
-
 	mClipIndex = clipIndex;
 	mIsLooping = looping;
+	mIsBlending = blend;
 	mAnimationTick = 0.0f;
-
-	if (blend == true)
-	{
-		blending();
-	}
 }
 void Animator::update(float deltaTime)
 {
@@ -47,6 +42,16 @@ void Animator::update(float deltaTime)
 		else
 		{
 			mAnimationTick = animClip.tickDuration;
+			if (mIsBlending)
+			{
+				blending(mClipIndex,mClipIndex,1.0f);
+				mClipIndex++;
+				if (mClipIndex >= model->animationClips.size())
+				{
+					mClipIndex = 1;
+				}
+				PlayAnimation(mClipIndex,mIsLooping,mIsBlending);
+			}
 		}
 	}
 }
@@ -60,8 +65,6 @@ bool Animator::IsFinished() const
 	auto model = ModelManager::Get()->GetModel(mModelId);
 	const auto& animClip = model->animationClips[mClipIndex];
 	return mAnimationTick >= animClip.tickDuration;
-
-
 }
 size_t Animator::GetAnimationCount() const
 {
@@ -88,7 +91,16 @@ WNTRmath::Matrix4 Animator::GetToParentTransform(const Bone* bone) const
 
 
 
-void Animator::blending() {
+void Animator::blending(int lastClip, int newClip,float mDuration) {
+	float t = mDuration;
+
+	auto model = ModelManager::Get()->GetModel(mModelId);
+	const auto& lastAnimClip = model->animationClips[lastClip];
+	const auto& newAnimClip = model->animationClips[newClip];
+
+
+
+
 
 
 }

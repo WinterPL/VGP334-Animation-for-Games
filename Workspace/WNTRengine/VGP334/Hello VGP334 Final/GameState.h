@@ -26,6 +26,8 @@ protected:
 	RenderObject mGround;
 
 	bool mDrawSkeleton = true;
+	bool mLooping = true;
+	bool mBlending = false;
 	int mAnimationIndex = -1;
 };
 
