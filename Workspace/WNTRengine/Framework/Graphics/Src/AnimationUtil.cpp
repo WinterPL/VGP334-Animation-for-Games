@@ -67,7 +67,6 @@ void AnimationUtil::DrawSkeleton(ModelId modelId, const BoneTransforms& boneTran
 				const auto posB = WNTRmath::GetTranslation(boneTransforms[bone->parentIndex]);
 				SimpleDraw::AddLine(posA, posB, Colors::HotPink);
 				SimpleDraw::AddSphere(10,10,0.01f,posA,Colors::Green);
-
 			}
 		}
 	}
