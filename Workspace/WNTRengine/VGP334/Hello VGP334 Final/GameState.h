@@ -27,7 +27,7 @@ protected:
 
 	bool mDrawSkeleton = true;
 	bool mLooping = true;
-	bool mBlending = false;
+	bool mLoopAll = false;
 	int mAnimationIndex = -1;
 };
 

@@ -108,11 +108,10 @@ void GameState::DebugUI()
         }
         ImGui::Checkbox("DrawSkeleton##", &mDrawSkeleton);
 
-        
-
-        if (ImGui::Checkbox("Loop", &mLooping)||ImGui::Checkbox("Blending", &mBlending)|| ImGui::DragInt("PlayAnimation##", &mAnimationIndex, 1, -1, mCharacterAnimator.GetAnimationCount() - 1))
+        if (ImGui::Checkbox("Loop", &mLooping)||ImGui::Checkbox("Blending", &mLoopAll)|| ImGui::DragInt("PlayAnimation##", &mAnimationIndex, 1, -1, mCharacterAnimator.GetAnimationCount() - 1))
         {
-            mCharacterAnimator.PlayAnimation(mAnimationIndex, mLooping,mBlending);
+
+            mCharacterAnimator.PlayAnimation(mAnimationIndex, mLooping, mLoopAll);
         }
        
         mStandardEffect.DebugUI();

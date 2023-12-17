@@ -13,11 +13,11 @@ void Animator::Initialize(ModelId id)
 	mAnimationTick = 0.0f;
 	mClipIndex = -1;
 }
-void Animator::PlayAnimation(int clipIndex, bool looping, bool blend)
+void Animator::PlayAnimation(int clipIndex, bool looping, bool loopAll)
 {
 	mClipIndex = clipIndex;
 	mIsLooping = looping;
-	mIsBlending = blend;
+	mIsLoopAll = loopAll;
 	mAnimationTick = 0.0f;
 }
 void Animator::update(float deltaTime)
@@ -42,15 +42,14 @@ void Animator::update(float deltaTime)
 		else
 		{
 			mAnimationTick = animClip.tickDuration;
-			if (mIsBlending)
+			if (mIsLoopAll)
 			{
-				blending(mClipIndex,mClipIndex,1.0f);
 				mClipIndex++;
 				if (mClipIndex >= model->animationClips.size())
 				{
 					mClipIndex = 1;
 				}
-				PlayAnimation(mClipIndex,mIsLooping,mIsBlending);
+				PlayAnimation(mClipIndex,mIsLooping, mIsLoopAll);
 			}
 		}
 	}
@@ -87,20 +86,4 @@ WNTRmath::Matrix4 Animator::GetToParentTransform(const Bone* bone) const
 
 	Transform transform = animation->GetTransform(mAnimationTick);
 	return transform.GetMatrix4();
-}
-
-
-
-void Animator::blending(int lastClip, int newClip,float mDuration) {
-	float t = mDuration;
-
-	auto model = ModelManager::Get()->GetModel(mModelId);
-	const auto& lastAnimClip = model->animationClips[lastClip];
-	const auto& newAnimClip = model->animationClips[newClip];
-
-
-
-
-
-
 }
